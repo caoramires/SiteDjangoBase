@@ -1,48 +1,15 @@
-{% load static %}
-
-<nav class="w-full flex justify-between items-center py-3 px-4 fixed z-50">
-    <div class="w-8/12 flex justify-start">
-        <a href="/">
-            <img class="w-1/5" src="{% static 'images/logo.png' %}">
-        </a>
-
-        {% if user.is_authenticated %}
-        <div class="w-4/5 py-3 px-4">
-            <a class="mr-2 href="#">Active</a>
-            <a class="mr-2 href="#">Link</a>
-            <a  class="mr-2 href="#">Link</a>
-            <a class="mr-2 href="#">Disabled</a>
-        </div>
-    </div>
-
-    <div class="w-4/12 flex justity-end justify-between">
-
-       <div class=" w-1/ flex flex-norap justify-end">
-            <a href="{% url 'grc:logout' %}">
-                <button class="bg-red-600 text-white py-1 px-3 rounded-md">
-                    Sair
-                </button>
-            </a>
-       </div>
-
-        {% else %}
-         <a href="{% url 'grc:login' %}">
-            <button class="bg-red-600 text-white py-1 px-3 rounded-md">
-                Login
-            </button>
-        </a>
-        {% endif %}
-         {% if user.is_authenticated %}
-        <div class="mr-2">
-            <a href="#">
-                <button class="bg-red-600 text-white py-1 px-3 rounded-md">
-                    Editar Perfil
-                </button>
-            </a>
-        </div>
-        {% endif %}
-
-    <div>
-
-</nav>
-
+            <tr>
+            <td>John</td>
+            <td>Doe</td>
+            <td>john@example.com</td>
+          </tr>
+          <tr>
+            <td>Mary</td>
+            <td>Moe</td>
+            <td>mary@example.com</td>
+          </tr>
+          <tr>
+            <td>July</td>
+            <td>Dooley</td>
+            <td>july@example.com</td>
+          </tr>

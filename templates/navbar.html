@@ -8,10 +8,10 @@
 
         {% if user.is_authenticated %}
         <div class="w-3/4 py-3 px-4">
-            <a class="mr-2 href="#">Active</a>
-            <a class="mr-2 href="#">Link</a>
-            <a  class="mr-2 href="#">Link</a>
-            <a class="mr-2 href="#">Disabled</a>
+            <a class="mr-2" href="{%  url 'grc:dimensoes' %}">Dimensões</a>
+            <a class="mr-2" href="#">Processos</a>
+            <a  class="mr-2" href="#">Procedimentos</a>
+            <a class="mr-2" href="{% url 'grc:dashboard' %}">Dashboard</a>
         </div>
     </div>
 

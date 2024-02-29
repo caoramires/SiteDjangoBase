@@ -7,14 +7,7 @@ Dashboard
 {% endblock %}
 
 {% block head %}
-<style>
-    #id_email{
-    width:100%;
-    color:#000000;
-    padding: 5px 5px;
-    }
 
-</style>
 {% endblock %}
 
 {% block content %}
@@ -27,35 +20,18 @@ Dashboard
             </h1>
 
         </div>
-        
+
       <h3>Status de Conformidade</h3>
         <p> Algum texto cobre o espaço </p>
-      <table class="table table-dark table-striped">
-        <thead>
-          <tr>
-            <th>Processo</th>
-            <th>Procedimento</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>John</td>
-            <td>Doe</td>
-            <td>john@example.com</td>
-          </tr>
-          <tr>
-            <td>Mary</td>
-            <td>Moe</td>
-            <td>mary@example.com</td>
-          </tr>
-          <tr>
-            <td>July</td>
-            <td>Dooley</td>
-            <td>july@example.com</td>
-          </tr>
-        </tbody>
-      </table>
+
+     <h1>Dimensões</h1>
+
+            <ul>
+                {% for dimensao in dimensoes %}
+                <li>{{ dimensao.nome }} - {{ dimensao.descricao }}</li>
+                {% endfor %}
+            </ul>
+
 </div>
 
 
