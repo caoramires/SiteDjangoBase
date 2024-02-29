@@ -1,13 +1,13 @@
 {% load static %}
 
-<nav class=" w-full flex justify-between items-center py-3 px-4 fixed z-50">
-    <div class="w-10/12 flex justify-start">
+<nav class="w-full flex justify-between items-center py-3 px-4 fixed z-50">
+    <div class="w-8/12 flex justify-start">
         <a href="/">
-            <img class="w-1/4" src="{% static 'images/logo.png' %}">
+            <img class="w-1/5" src="{% static 'images/logo.png' %}">
         </a>
 
         {% if user.is_authenticated %}
-        <div class="w-3/4 py-3 px-4">
+        <div class="w-4/5 py-3 px-4">
             <a class="mr-2 href="#">Active</a>
             <a class="mr-2 href="#">Link</a>
             <a  class="mr-2 href="#">Link</a>
@@ -15,7 +15,7 @@
         </div>
     </div>
 
-    <div class="w-2/12 flex justity-end justify-between">
+    <div class="w-4/12 flex justity-end justify-between">
 
        <div class=" w-1/ flex flex-norap justify-end">
             <a href="{% url 'grc:logout' %}">
@@ -45,3 +45,4 @@
     <div>
 
 </nav>
+

@@ -21,7 +21,7 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('website.urls')),
+    path('', include('grc.urls', namespace='grc')),
 ]
 
 # incluindo os links para as imagens static e de midia
