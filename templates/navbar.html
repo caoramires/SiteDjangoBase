@@ -1,7 +1,7 @@
 {% load static %}
 
 <nav class=" w-full flex justify-between items-center py-3 px-4 fixed z-50">
-    <div class="w-10/12 flex justify-start">
+    <div class="w-8/12 flex justify-start">
         <a href="/">
             <img class="w-1/4" src="{% static 'images/logo.png' %}">
         </a>
@@ -15,25 +15,27 @@
         </div>
     </div>
 
-    <div class="w-2/12 flex justity-end justify-between">
+    <div class="w-4/12 flex justify-between">
 
-       <div class=" w-1/ flex flex-norap justify-end">
-            <a href="{% url 'grc:logout' %}">
+       <div class="mr-2 w-full flex flex-norap justify-end">
+            <a class ="w-1/3 flex justify-end" href="{% url 'grc:logout' %}">
                 <button class="bg-red-600 text-white py-1 px-3 rounded-md">
                     Sair
                 </button>
             </a>
-       </div>
 
-        {% else %}
-         <a href="{% url 'grc:login' %}">
-            <button class="bg-red-600 text-white py-1 px-3 rounded-md">
-                Login
-            </button>
-        </a>
+            {% else %}
+           <div class ="w-full flex justify-end" >
+                 <a href="{% url 'grc:login' %}" >
+                    <button class="bg-red-600 text-white py-1 px-3 rounded-md">
+                        Login
+                    </button>
+                </a>
+           </div>
+        </div>
         {% endif %}
          {% if user.is_authenticated %}
-        <div class="mr-2">
+        <div class ="w-1/3 flex justify-end" >
             <a href="#">
                 <button class="bg-red-600 text-white py-1 px-3 rounded-md">
                     Editar Perfil
