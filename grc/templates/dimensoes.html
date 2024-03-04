@@ -11,47 +11,33 @@ Dimensões
 {% endblock %}
 
 {% block content %}
+<header class="min-h-screen bg-black bg-opacity-75 bg-blend-overlay showcase border-gray-600 border-b-8 flex justify-center items-center bg-no-repeat" >
 
-
-<header class="min-h-screen bg-black bg-opacity-75 bg-blend-overlay showcase border-gray-600 border-b-8 flex justify-between items-center bg-no-repeat" >
-    <div class="container mt-3">
-
-        <div class="z-10 h-full py-32 md:py-0 text-gray-100 text-center flex items-center flex-col">
-            <h1 class="font-semibold text-4xl md:text-5xl w-10/12 md:w-3/4 text-center">
-            Dimensões
+    <div class="container mx-auto mt-3">
+        <div class="z-10 h-full py-32 px-32 md:py-0 text-gray-100 text-center flex items-center flex-col">
+            <h1 class="font-semibold text-5xl md:text-1xl w-1/12 md:w-3/4 text-center align-self-center">
+                Dimensões
             </h1>
-             <hr>
-             <hr>
-             <hr>
-             <hr>
-        </div>
 
-        <div class="flex flex-col w-4/12 justify-between items-center justify-center ">
-            <table class="table table-dark table-striped text-xs mx-auto justify-center">
-                <thead>
-                  <tr>
-                    <th>Dimensões</th>
-                    <th>Processos Associados</th>
-                  </tr>
-                </thead>
-                <tbody>
-                {% for dimensao in proc_por_dimensao %}
-                  <tr>
-                    <td>{{ dimensao.nome }}</td>
-                   <td>
-                       <ul>
-                           {% for processo in dimensao.processo.all %}
-                           <li> {{ processo.nome }}</li>
-
-                           {% endfor %}
-                       </ul>
-                   </td>
-                  </tr>
-                 {% endfor %}
-
-                </tbody>
-            </table>
         </div>
     </div>
-</header>
+    <div class="container mx-auto mt-3">
+        <div class="flex justify-center ">
+            <ul>
+                {% for dimensao in dimensoes %}
+                <li class="font-semibold text-1xl md:text-1xl ">
+                    {{ dimensao.nome }} </li>
+                <hr>
+                <hr>
+                <hr>
+                <li class="text-sm">
+                <ion-icon name="caret-forward-outline"></ion-icon>  {{ dimensao.descricao }}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+ </header>
+
+
 {% endblock %}

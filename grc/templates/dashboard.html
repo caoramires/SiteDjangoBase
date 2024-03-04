@@ -21,14 +21,16 @@ Dashboard
 
         </div>
 
-      <h3>Status de Conformidade</h3>
-        <p> Algum texto cobre o espaço </p>
-
      <h1>Dimensões</h1>
 
             <ul>
                 {% for dimensao in dimensoes %}
-                <li>{{ dimensao.nome }} - {{ dimensao.descricao }}</li>
+                <li class="font-semibold text-2xl md:text-2xl w-10/12 md:w-3/4">
+                    {{ dimensao.nome }} </li>
+                <hr>
+                <li>
+                <ion-icon name="caret-forward-outline"></ion-icon>  {{ dimensao.descricao }}
+                </li>
                 {% endfor %}
             </ul>
 
