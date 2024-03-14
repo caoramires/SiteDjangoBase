@@ -1,6 +1,6 @@
 from django.shortcuts import redirect, reverse, render, get_object_or_404
 from django.http import HttpResponseRedirect
-from .forms import EditarAtenderForm
+from .forms import EditarAtenderForm, EditarTarefaForm
 from .models import Framework, Dimension, Processo, Procedimento, Plano, Tarefa
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, ListView, DetailView, FormView, UpdateView, View
@@ -173,3 +173,42 @@ class Tarefas(LoginRequiredMixin, ListView):
         tarefas_plano = Tarefa.objects.filter(plano=plano)
         context["tarefas_plano"] = tarefas_plano
         return context
+
+class EditarTarefa(LoginRequiredMixin, FormView):
+    template_name = "editartarefa.html"
+    model = Tarefa
+    form_class = EditarTarefaForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        pk = self.kwargs.get('tarefa_id')
+        tarefa = Tarefa.objects.filter(pk=pk)
+        context["tarefa"] = tarefa
+        return context
+
+    def form_valid(self, form):
+        form.save()
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse('grc:planos')
+
+
+class CriarTarefa(LoginRequiredMixin, FormView):
+    template_name = "criartarefa.html"
+    model = Tarefa
+    form_class = EditarTarefaForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        pk = self.kwargs.get('tarefa_id')
+        tarefa = Tarefa.objects.filter(pk=pk)
+        context["tarefa"] = tarefa
+        return context
+
+    def form_valid(self, form):
+        form.save()
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse('grc:planos')

@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block titulo %}
-Planos
+Ações
 {% endblock %}
 
 {% block head %}
@@ -14,10 +14,12 @@ Planos
         <div class="z-10 h-full py-32 md:py-0 text-gray-100 text-center flex items-center flex-col">
             <div class ="flex justify-start">
                 <h1 class=" font-semibold text-4xl md:text-5xl  mt-4  md:wd-3/4 text-center" >
-                    Planos em Andamento
+                    Ações em Andamento
                 </h1>
             </div>
-             <div class="dropdown">
+        </div>
+         <div>
+             <div class="dropdown" >
                   <button type="button" class="btn btn-primary dropdown-toggle mt-4" data-bs-toggle="dropdown">
                     Status
                   </button>
@@ -25,6 +27,14 @@ Planos
                     <li><a class="dropdown-item" href="{% url 'grc:planosconcluidos' %}">Concluídos</a></li>
                     <li><a class="dropdown-item" href=" {% url 'grc:planosplanejados' %}">Planejados</a></li>
                     <li><a class="dropdown-item" href="{% url 'grc:planoscancelados' %}">Cancelados</a></li>
+                  </ul>
+
+                  <button type="button" class="btn btn-primary dropdown-toggle mt-4" data-bs-toggle="dropdown">
+                    Criar
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="{% url 'grc:planos' %}">Criar Ação</a></li>
+                    <li><a class="dropdown-item" href=" {% url 'grc:criartarefa' %}">Criar Tarefa</a></li>
                   </ul>
             </div>
 

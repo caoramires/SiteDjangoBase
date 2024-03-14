@@ -1,7 +1,7 @@
 
 from django.urls import path, reverse_lazy
 from .views import Homepage, Dashboard, Dimensoes, Processos, Procedimentos, Editarproc, Editarperfil, Planos, \
-    Tarefas, PlanosConcluidos, PlanosCancelados, PlanosPlanejados
+    Tarefas, PlanosConcluidos, PlanosCancelados, PlanosPlanejados, EditarTarefa, CriarTarefa
 from django.contrib.auth import views as auth_view
 
 app_name = 'grc'
@@ -19,6 +19,8 @@ urlpatterns = [
     path('planoscancelados/', PlanosCancelados.as_view(), name='planoscancelados'),
     path('planosplanejados/', PlanosPlanejados.as_view(), name='planosplanejados'),
     path('tarefas/<int:plano_id>', Tarefas.as_view(), name='tarefas'),
+    path('editartarefa/<int:tarefa_id>', EditarTarefa.as_view(), name='editartarefa'),
+    path('criartarefa/', CriarTarefa.as_view(), name='criartarefa'),
     path('editarproc/', Editarproc.as_view(), name='editarproc'),
     path('editarproc2/', Editarproc.as_view(), name='editarproc2'),
     path('editarplano/', Editarproc.as_view(), name='editarplano'),
