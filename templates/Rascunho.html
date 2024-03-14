@@ -38,3 +38,233 @@
             </ul>
         </div>
     </div>
+
+
+  #
+    # def __init__(self, **kwargs):
+    #     super().__init__(**kwargs)
+    #     self.form = None  # inicializar o atributo `form`
+    #
+    # def get_form(self, form_class=None):
+    #     if not self.form:
+    #         self.form = super().get_form(form_class)
+    #     print(self.form)
+    #     return self.form
+
+     def form_valid(self, form):
+        # print(f"Formulário válido: {form.is_valid()}")
+        # print(form)
+        for pk, atendida in form.cleaned_data.items():
+            # print( 'antes do if', pk, atendida)
+            if pk.startswith('atendida-'):
+                procedimento = Procedimento.objects.get(pk=pk[9:])
+                procedimento.atendida = atendida
+                print('dentro do if', procedimento.atendida)
+        procedimentos = Procedimento.objects.filter(pk__in=form.cleaned_data.keys())
+        Procedimento.objects.bulk_update(procedimentos, ['atendida'])
+
+        if not form.is_valid():
+            for field, error in form.errors.items():
+                print(f"Erro de validação: {field} - {error}")
+
+        return super().form_valid(form)
+
+ # Exemplo de combinação ListView, FormView, View
+
+from django.views.generic import ListView, FormView
+from django.views.generic.edit import ModelFormMixin
+from django.views import View
+from django.urls import reverse_lazy
+from .models import Purchase, PurchaseForm
+
+class PurchaseDisplay(ListView):
+     model = Purchase
+     template_name = 'purchase_list.html'
+
+     def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = PurchaseForm
+        return context
+
+class PurchaseAdd(FormView):
+    template_name = 'purchase_list.html'
+    form_class = PurchaseForm
+    model = Purchase
+
+  def post(self, request, *args, **kwargs):
+      form = self.get_form()
+      if form.is_valid():
+          form.save()
+      return super().post(request, *args, **kwargs)
+
+    success_url = reverse_lazy('purchase_list')
+
+class PurchaseListView(View):
+
+    def get(self, request, *args, **kwargs):
+        view = PurchaseDisplay.as_view()
+        return view(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        view = PurchaseAdd.as_view()
+        return view(request, *args, **kwargs)
+
+
+     #Inicio
+    # def get(self, request, *args, **kwargs):
+    #     context = self.get_context_data()
+    #     return render(request, self.template_name, context)
+    #
+    # def get_context_data(self, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     context['procedimentos'] = Procedimento.objects.all()
+    #     context['situacao_atual'] = [procedimento.atendida for procedimento in context['procedimentos']]
+    #     context['LISTA_SITUACAO'] = [('SIM', 'Sim'), ('EmP', 'Em parte'), ('NAO', 'Não')]
+    #     context['form'] = self.form_class
+    #     return context
+    #
+    # def form_valid(self, form):
+    #     pk_list = [int(pk.split('-')[1]) for pk in form.cleaned_data.keys() if '-' in pk]
+    #     atendida_list = [form.cleaned_data[pk] for pk in pk_list]
+    #     print(atendida_list)
+    #
+    #     for pk, atendida in zip(pk_list, atendida_list):
+    #         procedimento = Procedimento.objects.get(pk=pk)
+    #         procedimento.atendida = atendida
+    #         procedimento.save()
+    #
+    #     return super().form_valid(form)
+    #
+    # def get_success_url(self):
+    #     return reverse_lazy('grc:procedimentos')
+# FIm
+#     def form_invalid(self, form):
+#         print(form.cleaned_data.items())
+#         errors = form.errors.as_json()
+#         return JsonResponse({'errors': errors}, status=400)
+
+
+    # def post(self, request, *args, **kwargs):
+    #     form = self.form_class
+    #     if form.is_valid(self):
+    #         return self.form_valid(form)
+    #     else:
+    #         return self.form_invalid(form)
+
+    #
+    # def post(self, request, *args, **kwargs):
+    #     form = self.get_form()
+    #     if form.is_valid():
+    #         return self.form_valid(form)
+    #     else:
+    #         return self.form_invalid(form)
+    #         # return self.render_to_response(self.get_context_data(form=form))
+    #
+    # def edit(self, request):
+    #     if request.method == 'POST':
+    #         form = EditarAtenderForm(request.POST)
+    #         if form.is_valid():
+    #             atendida = form.cleaned_data['atendida']
+    #             print(atendida)
+    #     render(request, 'grc/procedimentos.html')
+    #
+
+
+
+    # def form_valid(self, form):
+    #     for key, value in form.cleaned_data.items():
+    #         pk = key.split('-')[-1]
+    #         procedimento = Procedimento.objects.get(pk=pk)
+    #         procedimento.atendida = value
+    #         procedimento.save()
+    #
+    #     updated_procedimentos = list(Procedimento.objects.all())
+    #     data = [{'nic': p.nic, 'descricao': p.descricao, 'atendida': p.atendida, 'data_conclusao': p.data_conclusao} for p in updated_procedimentos]
+    #
+    #     return JsonResponse({'data': data}, status=200)
+    #
+    # def form_invalid(self, form):
+    #     print(form.cleaned_data.items())
+    #     errors = form.errors.as_json()
+    #     return JsonResponse({'errors': errors}, status=400)
+
+
+
+
+
+# class Editarproc(LoginRequiredMixin, View):
+#     model = Procedimento
+#     fields = ['nic', 'descricao', 'atendida']
+#     template_name = 'editarprocpage.html'
+#     form_class = EditarAtenderForm
+#
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         context['procedimentos'] = Procedimento.objects.all()
+#         context['situacao_atual'] = [procedimento.atendida for procedimento in context['procedimentos']]
+#         context['LISTA_SITUACAO'] = [('SIM', 'Sim'), ('EmP', 'Em parte'), ('NAO', 'Não')]
+#         context['form'] = self.get_form()
+#         return context
+#
+#     def post(self, request, *args, **kwargs):
+#         form = self.get_form()
+#         if form.is_valid():
+#             return self.form_valid(form)
+#         else:
+#             return self.form_invalid(form)
+#
+#     def form_valid(self, form):
+#         for key, value in form.cleaned_data.items():
+#             pk = key.split('-')[-1]
+#             procedimento = Procedimento.objects.get(pk=pk)
+#             procedimento.atendida = value
+#             procedimento.save()
+#
+#         updated_procedimentos = list(Procedimento.objects.all())
+#         data = [{'nic': p.nic, 'descricao': p.descricao, 'atendida': p.atendida} for p in updated_procedimentos]
+#
+#         return JsonResponse({'data': data}, status=200)
+
+
+#
+# class Editarproc(FormView):
+#     template_name = 'editarprocpage.html'
+#     model = Procedimento
+#     fields = ['atendida']
+#     success_url = reverse_lazy('grc:procedimentos')
+#     form_class = EditarAtenderForm
+#
+#
+#     def get_context_data(self, **kwargs):
+#         context =super().get_context_data(**kwargs)
+#         LISTA_SITUACAO =[('SIM', 'Sim'), ('EmP', 'Em parte'), ('NAO', 'Não')]
+#         context['procedimentos'] = Procedimento.objects.all()
+#         context['LISTA_SITUACAO'] = LISTA_SITUACAO
+#         return context
+#
+#     def verifica(self, request):
+#         form=EditarAtenderForm(request.POST or None)
+#         if form.is_valid():
+#             print(form.cleaned_data)
+#
+#     def form_invalid(self, form):
+#
+#         # Registrar erros de validação
+#         for field, error in form.errors.items():
+#             print(f"Erro de validação: {field} - {error}")
+#         print(form.cleaned_data.items())
+#
+#         return super().form_invalid(form)
+#
+#
+#     def form_valid(self, form):
+#         for pk, atendida in form.cleaned_data.items():
+#             # print( 'antes do if', pk, atendida)
+#             if pk.startswith('atendida-'):
+#                 procedimento = Procedimento.objects.get(pk=pk[9:])
+#                 procedimento.atendida = atendida
+#                 print('dentro do if', procedimento.atendida)
+#         procedimentos = Procedimento.objects.filter(pk__in=form.cleaned_data.keys())
+#         Procedimento.objects.bulk_update(procedimentos, ['atendida'])
+#
+#         return super().form_valid(form)

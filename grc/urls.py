@@ -1,6 +1,7 @@
 
 from django.urls import path, reverse_lazy
-from .views import Homepage, Dashboard, Dimensoes, Processos, Procedimentos, Editarprocedimento, Editarperfil
+from .views import Homepage, Dashboard, Dimensoes, Processos, Procedimentos, Editarproc, Editarperfil, Planos, \
+    Tarefas, PlanosConcluidos, PlanosCancelados, PlanosPlanejados
 from django.contrib.auth import views as auth_view
 
 app_name = 'grc'
@@ -13,7 +14,14 @@ urlpatterns = [
     path('dimensoes/', Dimensoes.as_view(), name='dimensoes'),
     path('processos/', Processos.as_view(), name='processos'),
     path('procedimentos/', Procedimentos.as_view(), name='procedimentos'),
-    path('editarprocedimento/', Editarprocedimento.as_view(), name='editarprocedimento'),
+    path('planos/', Planos.as_view(), name='planos'),
+    path('planosconcluidos/', PlanosConcluidos.as_view(), name='planosconcluidos'),
+    path('planoscancelados/', PlanosCancelados.as_view(), name='planoscancelados'),
+    path('planosplanejados/', PlanosPlanejados.as_view(), name='planosplanejados'),
+    path('tarefas/<int:plano_id>', Tarefas.as_view(), name='tarefas'),
+    path('editarproc/', Editarproc.as_view(), name='editarproc'),
+    path('editarproc2/', Editarproc.as_view(), name='editarproc2'),
+    path('editarplano/', Editarproc.as_view(), name='editarplano'),
     path('editarperfil/<int:pk>', Editarperfil.as_view(), name='editarperfil'),
     path('mudarsenha/', auth_view.PasswordChangeView.as_view(template_name="editarperfil.html",
                                                              success_url=reverse_lazy('grc:dashboard')), name='mudarsenha'),

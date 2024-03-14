@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block titulo %}
+Planos
+{% endblock %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+<header class="min-h-screen bg-black bg-opacity-75 bg-blend-overlay showcase border-gray-600 border-b-8 flex justify-center items-center bg-no-repeat">
+     <div class="container mt-14 mx-auto">
+        <div class="z-10 h-full py-32 md:py-0 text-gray-100 text-center flex items-center flex-col">
+            <div class ="flex justify-start">
+                <h1 class=" font-semibold text-4xl md:text-5xl  mt-4  md:wd-3/4 text-center" >
+                    Planos em Andamento
+                </h1>
+            </div>
+             <div class="dropdown">
+                  <button type="button" class="btn btn-primary dropdown-toggle mt-4" data-bs-toggle="dropdown">
+                    Status
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="{% url 'grc:planosconcluidos' %}">Concluídos</a></li>
+                    <li><a class="dropdown-item" href=" {% url 'grc:planosplanejados' %}">Planejados</a></li>
+                    <li><a class="dropdown-item" href="{% url 'grc:planoscancelados' %}">Cancelados</a></li>
+                  </ul>
+            </div>
+
+        </div>
+
+
+        <div class="container-sm text-gray-100  mt-4 ">
+            <table class="table table-auto text-xs table-responsive-md text-gray-100 mx-auto">
+                <thead>
+                  <tr>
+                      <th>Procedimento</th>
+                      <th>Nome</th>
+                      <th>Descrição</th>
+                      <th>Responsavel</th>
+                      <th>Data Inicio</th>
+                      <th>Data Planejada</th>
+
+                  </tr>
+                </thead>
+                <tbody>
+                {% for plano in planos_andamento%}
+                <tr>
+                    <td>
+                        <ul>
+                            <li>{{  plano.procedimento }}</li>
+                        </ul>
+                    </td>
+                    <td>
+                        <ul>
+                            <a href="{% url 'grc:tarefas' plano.pk %}">
+                                <li>{{ plano.nome }}</li>
+                            </a>
+                        </ul>
+                    </td>
+
+                    <td>
+                        <ul>
+                            <li>{{ plano.descricao }}</li>
+                        </ul>
+
+                    </td>
+
+                        <td>
+                            <ul>
+                                <li>{{ plano.responsavel }}</li>
+                            </ul>
+                        </td>
+                        <td>
+                            <ul>
+                                <li>{{ plano.data_inicio }}</li>
+                            </ul>
+                        </td>
+                        <td>
+                            <ul>
+                                <li>{{ plano.data_planejada }}</li>
+                            </ul>
+                        </td>
+
+                </tr>
+
+                {% endfor %}
+            </tbody>
+            </table>
+        </div>
+    </div>
+</header>
+
+{% endblock %}

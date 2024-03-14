@@ -25,6 +25,26 @@ SECRET_KEY = 'django-insecure-%dwm9_1*en&@&r55zj5n$_w&8(r0wo&t9&$gxdir%gh4q*7n1w
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# Detalhamento do debug
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'handlers': {
+#         'console': {
+#             'class': 'logging.StreamHandler',
+#             'level': 'DEBUG',
+#         },
+#     },
+#     'loggers': {
+#         'django': {
+#             'handlers': ['console'],
+#             'level': 'DEBUG',
+#             'propagate': False,
+#         },
+#     },
+# }
+
+
 ALLOWED_HOSTS = []
 
 
@@ -40,6 +60,7 @@ INSTALLED_APPS = [
     'grc',
     'crispy_forms',
     'crispy_bootstrap5',
+    'jquery',
 
 ]
 

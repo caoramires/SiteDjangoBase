@@ -19,3 +19,4 @@ def proc_por_dimensao(request):
     proc_por_dimensao = Dimension.objects.all().prefetch_related('processo')
 
     return {'proc_por_dimensao': proc_por_dimensao}
+

@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block titulo %}
+Editar
+{% endblock %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+<header class="min-h-screen bg-black bg-opacity-75 bg-blend-overlay showcase border-gray-600 border-b-8 flex justify-center items-center bg-no-repeat">
+     <div class="container mt-14 mx-auto">
+         <div class="z-10 h-full py-32 md:py-0 text-gray-100 text-start flex  flex-col">
+             <h1 class=" font-semibold text-4xl md:text-5xl  mt-4 w-3/3 md:wd-3/4 text-center" >
+                        Editar Procedimentos
+             </h1>
+
+<!--            <form action="{% url 'grc:editarproc' %}" method="post">-->
+             <form id="editarprocform" method="post">
+                {% csrf_token %}
+                <table class="table table-auto text-xs table-sm table-responsive-md text-gray-100 mx-auto">
+                    <thead>
+                        <tr>
+                            <th>NIC</th>
+                            <th>Descrição</th>
+                            <th>Situação Atual</th>
+                            <th>Nova Situação</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for procedimento in procedimentos %}
+                        <tr>
+                            <td>{{ procedimento.nic }}</td>
+                            <td>{{ procedimento.descricao }}</td>
+                            <td>{{ procedimento.atendida }}</td>
+                            <td>
+                                <select class="text-black " name="atendida-{{ procedimento.pk }}">
+                                    {% for situacao in LISTA_SITUACAO %}
+                                        <option value="{{ situacao.0 }}"{% if situacao.0 == procedimento.atendida %} selected{% elif situacao.1 == procedimento.atendida %} selected{% endif %}>{{ situacao.1 }}</option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                 {% if user.is_authenticated %}
+                <div class ="flex justify-end" >
+                    <a href="{% url 'grc:editarproc' %}">
+                        <button type="submit" class="bg-red-600 text-white py-1 px-3 rounded-md mb-14">
+                            Salvar Alterações
+                        </button>
+                    </a>
+                </div>
+                 {% endif %}
+            </form>
+             <div id="updated-data"></div> </div>
+         </div>
+     </div>
+</header>
+
+
+<script>
+$('#editarprocform').submit(function(event) {
+    event.preventDefault();
+
+    var atendida_values = [];
+
+    $('select[id^="atendida_"]').each(function() {
+        var pk = $(this).attr('id').split('_')[1];
+        var value = $(this).val();
+        atendida_values.push(pk + '-' + value);
+    });
+
+    $.ajax({
+        url: "{% url 'grc:editarproc' %}",
+        type: "POST",
+        data: {
+            atendida_values: atendida_values,
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        },
+        success: function(response) {
+            var updatedData = response.data;
+            var tableBody = $('#updated-data');
+            tableBody.empty();
+
+            for (var i = 0; i < updatedData.length; i++) {
+                var procedimento = updatedData[i];
+                var row = '<tr><td>' + procedimento.nic + '</td><td>' + procedimento.descricao + '</td><td>' + procedimento.atendida + '</td></tr>';
+                tableBody.append(row);
+            }
+        },
+        error: function(error) {
+            alert("Erro ao salvar as alterações!");
+        }
+    });
+});
+</script>
+
+{% endblock %}

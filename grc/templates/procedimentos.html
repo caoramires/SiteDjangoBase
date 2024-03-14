@@ -14,11 +14,22 @@ Procedimentos
 <header class="min-h-screen bg-black bg-opacity-75 bg-blend-overlay showcase border-gray-600 border-b-8 flex justify-center items-center bg-no-repeat">
      <div class="container mt-14 mx-auto">
         <div class="z-10 h-full py-32 md:py-0 text-gray-100 text-center flex items-center flex-col">
+            <div class ="w-1/3 flex justify-start">
+                <h1 class=" font-semibold text-4xl md:text-5xl  mt-4 w-1/3 md:wd-3/4 text-center" >
+                    Procedimentos
+                </h1>
+            </div>
+            {% if user.is_authenticated %}
+            <div class ="w-1/3 flex justify-end" >
+                <a href="{% url 'grc:editarproc' %}">
+                    <button class="bg-red-600 text-white py-1 px-3 rounded-md">
+                        Editar
+                    </button>
+                </a>
+            </div>
+            {% endif %}
+        </div>
 
-        <h1 class=" font-semibold text-4xl md:text-5xl  mt-4 w-10/12 md:wd-3/4 text-center" >
-            Procedimentos
-        </h1>
-    </div>
          <div class="container-sm text-gray-100 m-11/12  mt-4 ">
             <table class="table table-auto text-xs table-sm table-responsive-md text-gray-100 mx-auto">
                 <thead>
@@ -57,10 +68,9 @@ Procedimentos
                 {% endfor %}
             </tbody>
             </table>
-          </dev>
+        </div>
+
      </div>
-
-
 </header>
 
 {% endblock %}
