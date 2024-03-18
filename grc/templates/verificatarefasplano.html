@@ -21,7 +21,7 @@ Tarefa
 
             <div class =" flex justify-start">
                 <h1 class=" font-semibold text-2xl md:text-1xl  mt-4  md:wd-3/4 text-center" >
-                    Tarefas da Ação - {{ tarefas_plano.first.plano }}
+                    Exclua antes as Tarefas da Ação - {{ tarefas_plano.first.plano }}
                 </h1>
             </div>
 
@@ -73,7 +73,9 @@ Tarefa
                         </td>
                       <td>
                             <ul>
+                                {% if  tarefa.pk  %}
                                 <li>
+
                                     <a data-bs-toggle="tooltip" title="Editar" href="{% url 'grc:editartarefa' tarefa.pk %}">
                                     <ion-icon name="reader-outline"></ion-icon>
                                     </a>
@@ -82,7 +84,9 @@ Tarefa
                                     <a data-bs-toggle="tooltip" title="Excluir" href="{% url 'grc:excluirtarefa' tarefa.pk %}">
                                     <ion-icon name="trash-outline"></ion-icon>
                                     </a>
+
                                 </li>
+                                {% endif %}
                             </ul>
                         </td>
 

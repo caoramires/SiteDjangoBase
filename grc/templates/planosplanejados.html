@@ -43,6 +43,9 @@ Planejados
                       <th>Responsável</th>
                       <th>Data Inicio</th>
                       <th>Data Planejada</th>
+                      <th></th>
+                      <th></th>
+
                   </tr>
                 </thead>
                 <tbody>
@@ -83,6 +86,21 @@ Planejados
                         <td>
                             <ul>
                                 <li>{{ plano.data_conclusao }}</li>
+                            </ul>
+                        </td>
+                        <td>
+                            <ul>
+                                <li>
+                                    <a data-bs-toggle="tooltip" title="Editar" href="{% url 'grc:editarplano' plano.pk %}">
+                                    <ion-icon name="reader-outline"></ion-icon>
+                                    </a>
+                                </li>
+                                    <li>
+                                    <a data-bs-toggle="tooltip" title="Excluir" href="{% url 'grc:verificatarefasplano' plano.pk %}">
+                                    <ion-icon name="trash-outline"></ion-icon>
+                                    </a>
+
+                                </li>
                             </ul>
                         </td>
                 </tr>

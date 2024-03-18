@@ -33,7 +33,7 @@ Ações
                     Criar
                   </button>
                   <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="{% url 'grc:planos' %}">Criar Ação</a></li>
+                    <li><a class="dropdown-item" href="{% url 'grc:criarplano' %}">Criar Ação</a></li>
                     <li><a class="dropdown-item" href=" {% url 'grc:criartarefa' %}">Criar Tarefa</a></li>
                   </ul>
             </div>
@@ -51,6 +51,7 @@ Ações
                       <th>Responsavel</th>
                       <th>Data Inicio</th>
                       <th>Data Planejada</th>
+                      <th></th>
 
                   </tr>
                 </thead>
@@ -64,7 +65,7 @@ Ações
                     </td>
                     <td>
                         <ul>
-                            <a href="{% url 'grc:tarefas' plano.pk %}">
+                            <a data-bs-toggle="tooltip" title="Tarefas" href="{% url 'grc:tarefas' plano.pk %}" >
                                 <li>{{ plano.nome }}</li>
                             </a>
                         </ul>
@@ -90,6 +91,21 @@ Ações
                         <td>
                             <ul>
                                 <li>{{ plano.data_planejada }}</li>
+                            </ul>
+                        </td>
+                    <td>
+                            <ul>
+                                <li>
+                                    <a data-bs-toggle="tooltip" title="Editar" href="{% url 'grc:editarplano' plano.pk %}">
+                                    <ion-icon name="reader-outline"></ion-icon>
+                                    </a>
+                                </li>
+                                    <li>
+                                    <a data-bs-toggle="tooltip" title="Excluir" href="{% url 'grc:verificatarefasplano' plano.pk %}">
+                                    <ion-icon name="trash-outline"></ion-icon>
+                                    </a>
+
+                                </li>
                             </ul>
                         </td>
 

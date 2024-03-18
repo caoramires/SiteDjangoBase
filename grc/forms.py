@@ -1,6 +1,6 @@
 
 from django import  forms
-from .models import Procedimento, LISTA_SITUACAO, Tarefa
+from .models import Procedimento, LISTA_SITUACAO, Tarefa, Plano
 # from django.forms import  modelform_factory
 #
 #
@@ -20,12 +20,20 @@ class EditarAtenderForm(forms.ModelForm):
         for procedimento in self.procedimentos:
             self.fields[f'atendida_{procedimento.pk}'] = forms.ChoiceField(choices=LISTA_SITUACAO, required=False)
 
-class EditarTarefaForm(forms.ModelForm):
+
+class CriarPlanoForm(forms.ModelForm):
+    class Meta:
+        model = Plano
+        fields ="__all__"
+
+
+
+class CriaTarefaForm(forms.ModelForm):
     class Meta:
         model = Tarefa
         fields ="__all__"
 
-class CriaTarefaForm(forms.ModelForm):
+class EditarTarefaForm(forms.ModelForm):
     class Meta:
         model = Tarefa
         fields ="__all__"
