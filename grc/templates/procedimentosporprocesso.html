@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block titulo %}
+Procedimentos
+{% endblock %}
+
+{% block head %}
+
+{% endblock %}
+
+{% block content %}
+
+<header class="min-h-screen bg-black bg-opacity-75 bg-blend-overlay showcase border-gray-600 border-b-8 flex justify-center items-center bg-no-repeat">
+     <div class="container mt-14 mx-auto">
+        <div justify-start>
+            <a href="{% url 'grc:processospordimensao' dimensao %}">
+               <ion-icon name="arrow-undo-outline"></ion-icon>
+                Voltar
+                </a>
+            </div>
+        <div class="z-10 h-full py-32 md:py-0 text-gray-100 text-center flex items-center flex-col">
+            <div>
+                <h1 class=" font-semibold text-2xl md:text-1xl  mt-4  text-center" >
+                    Procedimentos para: {{procedimentos_processo.first.processo}}
+                </h1>
+            </div>
+
+        </div>
+
+
+            <table class="table table-auto text-s table-sm table-responsive-md text-gray-100 mx-auto">
+                <thead>
+                  <tr>
+
+                      <th>Nic</th>
+                      <th>Procedimento</th>
+                      <th>Atendido</th>
+                      <th>
+                        <a data-bs-toggle="tooltip" title="Editar" href="{% url 'grc:editarprocedimento' dimensao processo %}">
+                        <ion-icon name="reader-outline"></ion-icon>
+                        </a>
+                      </th>
+                  </tr>
+                </thead>
+                <tbody>
+                {% for procedimento in procedimentos_processo %}
+                <tr>
+                    <td>
+                        <ul>
+                            <li>{{ procedimento.nic }}</li>
+                        </ul>
+                    </td>
+                        <td>
+                            <ul>
+
+                                <li>{{ procedimento.descricao }}</li>
+                            </ul>
+
+                        </td>
+                    <td>
+                            <ul>
+                                <li>{{ procedimento.atendida }}</li>
+                            </ul>
+
+                        </td>
+
+                </tr>
+                {% endfor %}
+            </tbody>
+            </table>
+        </div>
+
+     </div>
+</header>
+
+{% endblock %}

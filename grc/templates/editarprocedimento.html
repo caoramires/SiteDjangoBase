@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block titulo %}
+Editar Procedimentos
+{% endblock %}
+
+{% block head %}
+
+{% endblock %}
+
+{% block content %}
+
+<header class="min-h-screen bg-black bg-opacity-75 bg-blend-overlay showcase border-gray-600 border-b-8 flex justify-center items-center bg-no-repeat">
+     <div class="container mt-14 mx-auto">
+        <div justify-start>
+            <a href="{% url 'grc:processospordimensao' procedimentos_processo.first.processo_id %}">
+               <ion-icon name="arrow-undo-outline"></ion-icon>
+                Voltar
+                </a>
+        </div>
+
+        <div class="z-10 h-full py-32 md:py-0 text-gray-100 text-center flex items-center flex-col">
+            <div>
+                <h1 class=" font-semibold text-2xl md:text-1xl  mt-4  text-center" >
+                   Editar Situação dos Procedimentos de: {{procedimentos_processo.first.processo}}
+                </h1>
+            </div>
+
+            </div>
+            <form method="post">
+                {% csrf_token %}
+
+            <table class="table table-auto text-s table-sm table-responsive-md text-gray-100 mx-auto">
+                <thead>
+                  <tr>
+
+                      <th>Nic</th>
+                      <th>Procedimento</th>
+                      <th>Situação Atual</th>
+                      <th>Nova situação</th>
+                  </tr>
+                </thead>
+                <tbody>
+                {% for procedimento in procedimentos_processo %}
+                <tr>
+                    <td>
+                        <ul>
+                            <li>{{ procedimento.nic }}</li>
+                        </ul>
+                    </td>
+                        <td>
+                            <ul>
+
+                                <li>{{ procedimento.descricao }}</li>
+                            </ul>
+
+                        </td>
+                    <td>
+                            <ul>
+                                <li>{{ procedimento.atendida }}</li>
+                            </ul>
+
+                        </td>
+                    <td>
+
+                        <select class="text-black " name="atendida" id="id_atendida">
+                            {% for situacao in LISTA_SITUACAO %}
+                                <option value="{{ situacao.0 }}"{% if situacao.0 == procedimento.atendida %} selected{% elif situacao.1 == procedimento.atendida %} selected{% endif %}>{{ situacao.1 }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                </tr>
+                {% endfor %}
+
+            </tbody>
+            </table>
+                 {% if user.is_authenticated %}
+                <div class ="flex justify-end" >
+                    <a href="{% url 'grc:processospordimensao' procedimentos_processo.first.processo_id %}">
+                        <button type="submit" class="bg-red-600 text-white py-1 px-3 rounded-md mb-14">
+                            Salvar Alterações
+                        </button>
+                    </a>
+                </div>
+             {% endif %}
+            </form>
+
+         </div>
+    </div>
+</header>
+
+{% endblock %}

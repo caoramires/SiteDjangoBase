@@ -1,6 +1,6 @@
 from django.shortcuts import redirect, reverse, render, get_object_or_404
 from django.http import HttpResponseRedirect
-from .forms import EditarAtenderForm, EditarTarefaForm, CriarPlanoForm
+from .forms import EditarAtenderForm, EditarTarefaForm, CriarPlanoForm, EditarProcedimentoForm
 from .models import Framework, Dimension, Processo, Procedimento, Plano, Tarefa
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, ListView, FormView, UpdateView, View, DeleteView
@@ -8,11 +8,7 @@ from django.views.generic.edit import FormMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.http import JsonResponse
-import json
 
-
-
-# Create your views here.
 
 class Homepage(TemplateView):
     template_name = 'homepage.html'
@@ -30,12 +26,13 @@ class Dashboard(LoginRequiredMixin, ListView):
 
 class Dimensoes(LoginRequiredMixin, ListView):
     template_name = "dimensoes.html"
-    model = Dimension
+    # model = Dimension
     model = Processo
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["dimensoes"] = Dimension.objects.all()
+        processos = Processo.objects.all()
+        context["processos"] = processos
         return context
 
 
@@ -48,6 +45,61 @@ class Processos(LoginRequiredMixin, ListView):
         context["processos"] = Processo.objects.all()
         return context
 
+class ProcessosPorDimensao(LoginRequiredMixin, ListView):
+    template_name = "processospordimensao.html"
+    model = Processo
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        dimensao = self.kwargs.get('pk')
+        processos_dimensao = Processo.objects.filter(dimension_id=dimensao)
+        context["processos_dimensao"] = processos_dimensao
+        context["dm"] = dimensao
+        return context
+
+class ProcedimentosPorProcesso(LoginRequiredMixin, ListView):
+    template_name = "procedimentosporprocesso.html"
+    model = Procedimento
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        processo = self.kwargs.get('pk')
+        dimensao = self.kwargs.get('dm')
+        print(f" kwargs = {self.kwargs}")
+        procedimento_processo = Procedimento.objects.filter(processo_id=processo)
+        print(f"Dimensao = {dimensao}")
+        context["procedimentos_processo"] = procedimento_processo
+        context["dimensao"] = dimensao
+        context["processo"] = processo
+        return context
+
+
+class EditarProcedimento(View, LoginRequiredMixin):
+    template_name = "editarprocedimento.html"
+
+    def get(self, request, **kwargs):
+        processo = self.kwargs.get('pk')
+        dimensao = self.kwargs.get('dm')
+        procedimentos_processo = Procedimento.objects.filter(processo_id=processo)
+        LISTA_SITUACAO = [('SIM', 'Sim'), ('EmP', 'Em parte'), ('NAO', 'Não')]
+        context = {
+            'procedimentos_processo': procedimentos_processo,
+            'LISTA_SITUACAO': LISTA_SITUACAO,
+            'dimensao': dimensao,
+            'processo_id': processo,
+        }
+        return render(request, self.template_name, context)
+
+    def post(self, request, **kwargs):
+        dimensao = self.kwargs.get('dm')
+        processo = self.kwargs.get('pk')
+        procedimentos_processo = Procedimento.objects.filter(processo_id=processo)
+        lista_novasituacao = request.POST.getlist('atendida')
+        for procedimento, situacao in zip(procedimentos_processo, lista_novasituacao):
+            procedimento.atendida = situacao
+            procedimento.save()
+        return redirect(reverse('grc:procedimentosporprocesso', args=[dimensao, processo]))
+
 
 class Procedimentos(LoginRequiredMixin, ListView):
     template_name = "procedimentos.html"
@@ -59,7 +111,9 @@ class Procedimentos(LoginRequiredMixin, ListView):
         context["processos"] = Processo.objects.all().prefetch_related('procedimento')
         return context
 
-class Editarproc2(LoginRequiredMixin, View):
+
+
+class Editarproc2(LoginRequiredMixin, View):     # inutil
     template_name = 'editarprocpage2.html'
     form_class = EditarAtenderForm
 
@@ -71,7 +125,7 @@ class Editarproc2(LoginRequiredMixin, View):
         context['form'] = self.form_class
         return context
 
-class Editarproc(LoginRequiredMixin, FormView):
+class Editarproc(LoginRequiredMixin, FormView):  # inutil
     template_name = 'editarprocpage.html'
     form_class = EditarAtenderForm
 
@@ -153,7 +207,6 @@ class EditarPlano(LoginRequiredMixin, UpdateView):
     def get_object(self, queryset=None):
         plano = None
         pk = self.kwargs.get(self.pk_url_kwarg)
-
         if id is not None:
             plano = Plano.objects.filter(pk=pk).first()
         return plano
@@ -169,41 +222,16 @@ class VerificaTarefasPlano(LoginRequiredMixin, TemplateView):
         plano = get_object_or_404(Plano, pk=pk)
         tarefas_plano = Tarefa.objects.filter(plano=plano)
         if tarefas_plano.exists():
-
-            print('Entrou em verifica get_context Plano')
             return render(request, self.template_name, {'tarefas_plano': tarefas_plano})
         else:
             return redirect('grc:excluirplano', pk=pk)
 
 
 
-    # def get_queryset(self):
-    #     plano = self.kwargs.get('pk')
-    #     tarefas_plano = Tarefa.objects.filter(plano=plano)
-    #     print('tarefa planos', tarefas_plano)
-    #     if not tarefas_plano:
-    #         print('entrou na condicional e plano =', plano)
-    #         return self.redirecionar_excluir_plano(plano)
-    #     print('Não entrou ')
-    #     return tarefas_plano
-    #
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     plano = self.kwargs.get('id')
-    #     tarefas_plano = Tarefa.objects.filter(plano=plano)
-    #     context["tarefas_plano"] = self.object_list
-    #     print('Entrou em verifica get_context Plano')
-    #     return context
-    #
-    # def redirecionar_excluir_plano(self, plano):
-    #     print('Entrou em redirecionar exclui')
-    #     return redirect('grc:excluirplano', pk=plano)
-
 class ExcluirPlano(LoginRequiredMixin, DeleteView):
     template_name = "excluirplano.html"
     model = Plano
     context_object_name = 'plano'
-    print('entrou em excluir Plano')
     success_url = reverse_lazy('grc:planos')
 
 
@@ -238,7 +266,6 @@ class PlanosPlanejados(LoginRequiredMixin, ListView):
         planos_planejados = Plano.objects.filter(status = "PLANEJADO")
         context["planos_planejados"] = planos_planejados
         return context
-
 
 
 class Tarefas(LoginRequiredMixin, ListView):

@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block titulo %}
+Processos
+{% endblock %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+
+
+<header class="min-h-screen bg-black bg-opacity-75 bg-blend-overlay showcase border-gray-600 border-b-8 flex justify-between items-center bg-no-repeat" >
+
+    <div class="container mx-auto mt-3">
+        <div class="z-10 py-32 md:py-0 text-gray-100 text-center w-1/6 md:w-full ">
+            <h1 class="font-semibold text-4xl  mt-10 md:text-1xl">
+            Processos para {{processos_dimensao.first.dimension}}
+            </h1>
+        </div>
+
+        <div class="container mx-auto mt-2">
+            <div justify-start>
+            <a href="{% url 'grc:dimensoes' %}">
+               <ion-icon name="arrow-undo-outline"></ion-icon>
+                Voltar
+                </a>
+            </div>
+            <div  class="flex  w-5/6 ">
+                <table class="table text-gray-100 text-s flex  mx-auto  w-5/6 md:w-full ">
+                    <thead>
+                      <tr>
+                          <th>Processo</th>
+                        <th>Descrição</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    {% for processo in processos_dimensao %}
+                      <tr>
+                          <td>
+                                <ul>
+                                    <a data-bs-toggle="tooltip" title="Procedimentos" href="{% url 'grc:procedimentosporprocesso' dm processo.pk %}" >
+                               <li> {{ processo.nome }} </li>
+                                </ul>
+                          </td>
+                           <td>
+                                <ul>
+                               <li> {{ processo.descricao }}</li>
+                                </ul>
+                          </td>
+                      </tr>
+                     {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        </div>
+</header>
+{% endblock %}

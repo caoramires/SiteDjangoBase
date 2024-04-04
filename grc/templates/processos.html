@@ -15,39 +15,40 @@ Processos
 
     <div class="container mx-auto mt-3">
         <div class="z-10 py-32 md:py-0 text-gray-100 text-center w-1/6 md:w-full ">
-            <h1 class="font-semibold text-4xl md:text-5xl">
+            <h1 class="font-semibold text-4xl  mt-4 md:text-5xl">
             Processos
             </h1>
         </div>
-    </div>
-    <div class="container mx-auto mt-3">
-        <div class="flex  w-5/6 ">
-            <table class="table  text-gray-100 table-auto text-xs flex  mx-auto  w-5/6 md:w-full justify-start">
-                <thead>
-                  <tr>
-                    <th>Dimensões</th>
-                    <th>Processos Associados</th>
-                  </tr>
-                </thead>
-                <tbody>
-                {% for dimensao in proc_por_dimensao %}
-                  <tr>
 
-                    <td>{{ dimensao.nome }}</td>
-                   <td>
-                       <ul>
-                           {% for processo in dimensao.processo.all %}
-                           <li> {{ processo.nome }}</li>
+        <div class="container mx-auto mt-3">
+            <div class="flex  w-2/6 ">
+                <table class="table  text-gray-100 table-auto text-xs flex  mx-auto  w-5/6 md:w-full justify-start">
+                    <thead>
+                      <tr>
+                        <th>Dimensões</th>
+                        <th>Processos Associados</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    {% for dimensao in proc_por_dimensao %}
+                      <tr>
 
-                           {% endfor %}
-                       </ul>
-                   </td>
-                  </tr>
-                 {% endfor %}
+                        <td>{{ dimensao.nome }}</td>
+                       <td>
+                           <ul>
+                               {% for processo in dimensao.processo.all %}
+                               <li> {{ processo.nome }}</li>
 
-                </tbody>
-            </table>
+                               {% endfor %}
+                           </ul>
+                       </td>
+                      </tr>
+                     {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
+        </div>
 </header>
 {% endblock %}

@@ -1,0 +1,51 @@
+    def post(self, request, pk):
+        procedimentos = Procedimento.objects.filter(processo_id=pk)
+        print(f'Procedimento = {procedimentos}')
+        print(f"Request = {request.POST.getlist('atendida')}")
+        for i, atendida in enumerate(request.POST.getlist('atendida')):
+            procedimento = procedimentos[i]
+            procedimento.atendida = atendida
+            procedimento.save()
+
+        return redirect(reverse('grc:editarprocedimento', args=[pk]))
+
+
+
+
+
+
+
+# trecho da view POST antes da alteração
+
+<input type="hidden" name="procedimentos_processo" value="{{ procedimentos_processo.first.id }}">
+<input type="hidden" name="nova_situacao-{{ procedimento.nic }}" value="{{ procedimento.atendida }}">
+<td>
+    <select class="text-black " name="atendida-{{ procedimento.pk }}">
+        {% for situacao in LISTA_SITUACAO %}
+            <option value="{{ situacao.0 }}"{% if situacao.0 == procedimento.atendida %} selected{% elif situacao.1 == procedimento.atendida %} selected{% endif %}>{{ situacao.1 }}</option>
+        {% endfor %}
+    </select>
+</td>
+
+     <select class="text-black " name="nova_situacao_{{procedimento.nic}}" id="id_nova_situacao">
+
+
+
+    def post(self, request, pk):
+        procedimentos_processo = Procedimento.objects.filter(processo_id=pk)
+        form = EditarProcedimentoForm(request.POST, procedimentos_processo=procedimentos_processo)
+         if form.is_valid():
+            for pk, value in form.cleaned_data.items():
+                if pk.startswith('atendida-'):
+                    procedimento_pk = int(pk.split('-')[1])
+                    procedimento = Procedimento.objects.get(pk=procedimento_pk)
+                    procedimento.atendida = value
+                    procedimento.save()
+           return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
+
+<a data-bs-toggle="tooltip" title="Gravar" href="{% url 'grc:editarprocedimento' procedimento.pk %}">
+                                    <ion-icon name="enter-outline"></ion-icon>
+                                    </a>

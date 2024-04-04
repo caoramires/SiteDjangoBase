@@ -2,7 +2,7 @@
 from django.urls import path, reverse_lazy
 from .views import Homepage, Dashboard, Dimensoes, Processos, Procedimentos, Editarproc, Editarperfil, Planos, \
     Tarefas, PlanosConcluidos, PlanosCancelados, PlanosPlanejados, EditarTarefa, CriarTarefa, CriarPlano, EditarPlano, \
-    ExcluirTarefa, ExcluirPlano, VerificaTarefasPlano
+    ExcluirTarefa, ExcluirPlano, VerificaTarefasPlano, ProcessosPorDimensao, ProcedimentosPorProcesso, EditarProcedimento
 from django.contrib.auth import views as auth_view
 
 app_name = 'grc'
@@ -14,7 +14,10 @@ urlpatterns = [
     path('logout/', auth_view.LogoutView.as_view(template_name='logout.html'), name='logout'),
     path('dimensoes/', Dimensoes.as_view(), name='dimensoes'),
     path('processos/', Processos.as_view(), name='processos'),
+    path('processospordimensao/<int:pk>', ProcessosPorDimensao.as_view(), name='processospordimensao'),
     path('procedimentos/', Procedimentos.as_view(), name='procedimentos'),
+    path('procedimentosporprocesso/<int:dm>/<int:pk>', ProcedimentosPorProcesso.as_view(), name='procedimentosporprocesso'),
+    path('editarprocedimento/<int:dm>/<int:pk>', EditarProcedimento.as_view(), name='editarprocedimento'),
     path('planos/', Planos.as_view(), name='planos'),
     path('criarplano/', CriarPlano.as_view(), name='criarplano'),
     path('editarplano/<int:pk>', EditarPlano.as_view(), name='editarplano'),
