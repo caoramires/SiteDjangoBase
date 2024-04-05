@@ -17,6 +17,7 @@ class Homepage(TemplateView):
 class Dashboard(LoginRequiredMixin, ListView):
     template_name = "dashboard.html"
     model = Dimension
+    model = Procedimento
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
