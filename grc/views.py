@@ -8,21 +8,379 @@ from django.views.generic.edit import FormMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.http import JsonResponse
-
+import json
+from django.utils import timezone
+import datetime
+from django.db.models import Count
+import plotly.graph_objects as go
+import plotly.offline as opy
+import pandas as pd
+import plotly.express as px
 
 class Homepage(TemplateView):
     template_name = 'homepage.html'
 
 
-class Dashboard(LoginRequiredMixin, ListView):
+class Dashboard(LoginRequiredMixin, TemplateView):
     template_name = "dashboard.html"
     model = Dimension
     model = Procedimento
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["dimensoes"] = Dimension.objects.all()
+        context = super(Dashboard, self).get_context_data(**kwargs)
+
+        # Consolida atendida por Processo
+        dimensao_data = {}
+        for dimensao in Dimension.objects.all():
+            processo_data = {}
+            for processo in dimensao.processo.all():
+                if processo.procedimento.all():
+                    procedimentos = processo.procedimento.all()
+                    processo_data[processo] = {
+                        'sim': procedimentos.filter(atendida='SIM').count(),
+                        'nao': procedimentos.filter(atendida='NAO').count(),
+                        'emp': procedimentos.filter(atendida='EmP').count(),
+                    }
+                    total_processo = sum(processo_data[processo].values())
+                    processo_data[processo]['total'] = total_processo
+                else:
+                    processo_data[processo] = {
+                        'sim': 0,
+                        'nao': 0,
+                        'emp': 0,
+                    }
+                    total_processo = 0
+                    processo_data[processo]['total'] = total_processo
+            dimensao_data[dimensao] = processo_data
+
+        print('-----------------------------------------------------------')
+        print(f' Dimensao_data >>>>> {dimensao_data}')
+        print('-----------------------------------------------------------')
+
+
+        # cria dict auxiliar para plotagem
+        df_data = {}
+        for dimensao, processo_data in dimensao_data.items():
+
+            for processo, contagem in processo_data.items():
+                if 'total' not in contagem:
+                    contagem['total'] = 0  # Preencher com 0 se a chave não existir
+
+                df_data.setdefault(dimensao, []).append({
+                    'dimensao': dimensao.nome,
+                    'processo': processo.nome,
+                    'sim': contagem['sim'],
+                    'nao': contagem['nao'],
+                    'emp': contagem['emp'],
+                    'total': contagem['total'],
+                })
+
+        for dimensao, processos in df_data.items():
+            for processo in processos:
+                # Verificar se a chave 'total' existe
+                if 'total' not in processo:
+                    processo['total'] = 0
+
+        print('-----------------------------------------------------------')
+        print(f' DF_DATA >>>>> {df_data}')
+        print('-----------------------------------------------------------')
+
+        # cria df para a plotagem
+
+        # Inicializar variáveis para totais
+
+        totais_por_dimensao = {}
+        lista_totais_dimensao =[]
+
+        # Iterar sobre o dicionário df_data
+        for dimensao, processos in df_data.items():
+            # Inicializar variáveis acumuladoras
+            total_sim = 0
+            total_nao = 0
+            total_emp = 0
+            numero_processos = 0
+            dimensao_nome = dimensao.nome
+
+            # Processar cada processo
+
+            for processo in processos:
+                total_sim += processo['sim']
+                total_nao += processo['nao']
+                total_emp += processo['emp']
+                numero_processos += 1
+
+            numero_procedimentos = total_sim + total_nao + total_emp
+
+            # Armazenar totais no dicionário auxiliar
+            # totais_por_dimensao[dimensao] = {
+            #     'Dimensao' : dimensao.nome,
+            #     'SIM': total_sim,
+            #     'NAO': total_nao,
+            #     'EMP': total_emp,
+            #     'Processos': numero_processos,
+            #     'Procedimentos': numero_procedimentos,
+            # }
+
+            lista_totais_dimensao.append({
+                'Dimensao': dimensao.nome,
+                'SIM': total_sim,
+                'NAO': total_nao,
+                'EMP': total_emp,
+                'Processos': numero_processos,
+                'Procedimentos': numero_procedimentos,
+            }
+            )
+        print('-----------------------------------------------------------')
+        # print(f'TOTAIS DIMENSAO {totais_por_dimensao}')
+        print('-----------------------------------------------------------')
+        print('-----------------------------------------------------------')
+        print(f'LISTA TOTAIS DIMENSAO {lista_totais_dimensao}')
+        print('-----------------------------------------------------------')
+
+        labels = []
+        datasets = []
+
+        for item in lista_totais_dimensao:
+            labels.append(item['Dimensao'])
+            datasets.append({
+                'label': 'SIM',
+                'data': item['SIM'],
+                'backgroundColor': '#696969',
+            }),
+            datasets.append( {
+                'label': 'NÃO',
+                'data': item['NAO'],
+                'backgroundColor': '#808080',
+            }),
+            datasets.append({
+                'label': 'EMP',
+                'data': item['EMP'],
+                'backgroundColor': '#C0C0C0',
+            })
+
+        print(f'LABEL   {labels}   DATASETS   {datasets}')
+
+        context['dimensao_data'] = dimensao_data
+        context['labels'] = json.dumps(labels)
+        context['datasets'] = json.dumps(datasets)
         return context
+
+
+class Painel(TemplateView):
+    template_name = "painel.html"
+    model = Dimension
+    model = Procedimento
+    model = Plano
+
+    def get(self, request, **kwargs):
+        context = super(Painel, self).get_context_data(**kwargs)
+
+        # Consolida atendida por Processo
+        dimensao_data = {}
+        for dimensao in Dimension.objects.all():
+            processo_data = {}
+            for processo in dimensao.processo.all():
+                if processo.procedimento.all():
+                    procedimentos = processo.procedimento.all()
+                    processo_data[processo] = {
+                        'sim': procedimentos.filter(atendida='SIM').count(),
+                        'nao': procedimentos.filter(atendida='NAO').count(),
+                        'emp': procedimentos.filter(atendida='EmP').count(),
+                    }
+                    total_processo = sum(processo_data[processo].values())
+                    processo_data[processo]['total'] = total_processo
+                else:
+                    processo_data[processo] = {
+                        'sim': 0,
+                        'nao': 0,
+                        'emp': 0,
+                    }
+                    total_processo = 0
+                    processo_data[processo]['total'] = total_processo
+            dimensao_data[dimensao] = processo_data
+
+        print('-----------------------------------------------------------')
+        print(f' Dimensao_DATA >>>>> {dimensao_data}')
+        print('-----------------------------------------------------------')
+
+
+        # cria dict auxiliar para plotagem
+        df_data = {}
+        for dimensao, processo_data in dimensao_data.items():
+
+            for processo, contagem in processo_data.items():
+                if 'total' not in contagem:
+                    contagem['total'] = 0  # Preencher com 0 se a chave não existir
+
+                df_data.setdefault(dimensao, []).append({
+                    'dimensao': dimensao.nome,
+                    'processo': processo.nome,
+                    'sim': contagem['sim'],
+                    'nao': contagem['nao'],
+                    'emp': contagem['emp'],
+                    'total': contagem['total'],
+                })
+
+        print('-----------------------------------------------------------')
+        print(f' DF_DATA >>>>> {df_data}')
+        print('-----------------------------------------------------------')
+
+
+        for dimensao, processos in df_data.items():
+            for processo in processos:
+                # Verificar se a chave 'total' existe
+                if 'total' not in processo:
+                    processo['total'] = 0
+
+        # cria df para a plotagem
+
+        lista_totais_dimensao = []
+
+        # Iterar sobre o dicionário df_data
+        for dimensao, processos in df_data.items():
+            total_sim = 0
+            total_nao = 0
+            total_emp = 0
+            numero_processos = 0
+            dimensao_nome = dimensao.nome
+
+            # Processar cada processo
+
+            for processo in processos:
+                total_sim += processo['sim']
+                total_nao += processo['nao']
+                total_emp += processo['emp']
+                numero_processos += 1
+
+            numero_procedimentos = total_sim + total_nao + total_emp
+
+
+            lista_totais_dimensao.append({
+                'Dimensao': dimensao.nome,
+                'SIM': total_sim,
+                'NAO': total_nao,
+                'EMP': total_emp,
+                'Processos': numero_processos,
+                'Procedimentos': numero_procedimentos,
+            }
+            )
+
+
+        labels = []
+        sim = []
+        nao = []
+        emp = []
+
+        for item in lista_totais_dimensao:
+            labels.append(item['Dimensao'])
+            sim.append(item['SIM'])
+            nao.append(item['NAO'])
+            emp.append(item['EMP'])
+
+        datasets = [{"label":"Sim", "data": sim}, {"label":"Nao", "data": nao},{"label":"Em Parte", "data": emp}]
+
+        labels_json = json.dumps(labels)
+        datasets_json = json.dumps(datasets)
+
+        print('-----------------------------------------------------------')
+        print(f' labels_json  {labels_json}')
+        print('-----------------------------------------------------------')
+        print('-----------------------------------------------------------')
+        print(f' datasets_json {datasets_json}')
+        print('-----------------------------------------------------------')
+
+    # Prepara dados de Planos para Plotagem
+
+        # Conta as ações por processo/Procedimento
+
+
+
+        print('-----------------------------------------------------------')
+        print(f' dimensao_processos_dic ')
+        print('-----------------------------------------------------------')
+
+        hoje = timezone.now()
+        planos_atrasados = []
+
+
+
+
+
+
+
+
+
+        # Associa Número de Ações de Processo à Dimensão
+
+        # print(f'planos_processo  {planos}')
+
+
+        context['dimensao_data'] = dimensao_data
+        context['labels'] = labels_json
+        context['datasets'] = datasets_json
+
+        return render(request, 'painel.html', context)
+
+
+
+
+class Dash(TemplateView):
+    template_name = "dash.html"
+    model = Dimension
+    model = Procedimento
+
+    def get(self, request):
+        emp_data = [
+            {"label": "IDENTIFICAR", "y": 60},
+            {"label": "PROTEGER", "y": 30},
+            {"label": "DETECTAR", "y": 25},
+            {"label": "RESPONDER", "y": 30},
+            {"label": "RECUPERAR", "y": 35},
+
+        ]
+
+        sim_data = [
+            {"label": "IDENTIFICAR", "y": 45},
+            {"label": "PROTEGER", "y": 20},
+            {"label": "DETECTAR", "y": 25},
+            {"label": "RESPONDER", "y": 20},
+            {"label": "RECUPERAR", "y": 25},
+
+        ]
+
+        nao_data = [
+            {"label": "IDENTIFICAR", "y": 0},
+            {"label": "PROTEGER", "y": 25},
+            {"label": "DETECTAR", "y": 20},
+            {"label": "RESPONDER", "y": 25},
+            {"label": "RECUPERAR", "y": 45},
+
+        ]
+
+        july_data = [
+            {"y": 450, "label": "RECUPERAR"},
+            {"y": 70, "label": "RESPONDER"},
+            {"y": 200, "label": "DETECTAR"},
+            {"y": 324, "label": "PROTEGER"},
+            {"y": 300, "label": "IDENTIFICAR"}
+        ]
+        august_data = [
+            {"y": 550, "label": "RECUPERAR"},
+            {"y": 270, "label": "RESPONDER"},
+            {"y": 400, "label": "DETECTAR"},
+            {"y": 524, "label": "PROTEGER"},
+            {"y": 500, "label": "IDENTIFICAR"}
+        ]
+        september_data = [
+            {"y": 660, "label": "RECUPERAR"},
+            {"y": 265, "label": "RESPONDER"},
+            {"y": 271, "label": "DETECTAR"},
+            {"y": 360, "label": "PROTEGER"},
+            {"y": 340, "label": "IDENTIFICAR"}
+        ]
+
+        return render(request, 'dash.html',
+                      {"emp_data": emp_data, "sim_data": sim_data, "nao_data": nao_data, "july_data" : july_data, "august_data": august_data, "september_data": september_data})
 
 
 class Dimensoes(LoginRequiredMixin, ListView):
@@ -68,7 +426,6 @@ class ProcedimentosPorProcesso(LoginRequiredMixin, ListView):
         dimensao = self.kwargs.get('dm')
         print(f" kwargs = {self.kwargs}")
         procedimento_processo = Procedimento.objects.filter(processo_id=processo)
-        print(f"Dimensao = {dimensao}")
         context["procedimentos_processo"] = procedimento_processo
         context["dimensao"] = dimensao
         context["processo"] = processo

@@ -272,3 +272,23 @@ class PurchaseListView(View):
 
 
 
+    # Criar o DataFrame
+        # df_processo = pd.DataFrame.from_dict(totais_porprocesso, orient='index')
+
+        df_dimensao = pd.DataFrame.from_dict(totais_por_dimensao, orient='index')
+
+        # # Definir o índice
+        # df_dimensao.set_index('Dimensao', inplace=True)
+
+        # Renomear colunas (opcional)
+        df_dimensao.columns = [ 'Dimensao', 'Sim', 'Não', 'Emp', 'Processos', 'Procedimentos']
+
+        print('-----------------------------------------------------------')
+        print(f'df_dimensao {df_dimensao}')
+
+
+  # buscar na base Planos os Processos/procedimentos
+
+  planos_processo = Plano.objects.annotate(
+            plano_count=Count('procedimento_id')
+        )

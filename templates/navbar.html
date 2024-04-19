@@ -8,6 +8,7 @@
 
         {% if user.is_authenticated %}
         <div class="w-3/4 py-3 px-4">
+            <a class="mr-2" href="{% url 'grc:painel' %}">Painel</a>
             <a class="mr-2" href="{% url 'grc:dashboard' %}">Dashboard</a>
             <a class="mr-2" href="{%  url 'grc:dimensoes' %}">Dimensões</a>
             <a class="mr-2" href="{%  url 'grc:processos' %}">Processos</a>

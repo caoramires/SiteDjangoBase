@@ -1,0 +1,161 @@
+
+{% extends 'base.html' %}
+{% load static %}
+
+{% block titulo %}
+Dash
+{% endblock %}
+
+{% block head %}
+
+{% endblock %}
+
+{% block content %}
+
+<head xmlns="http://www.w3.org/1999/html">
+
+    <script>
+          window.onload = function () {
+            var chart = new CanvasJS.Chart("chartContainer", {
+              exportEnabled: true,
+              theme: "dark2",
+              title: {
+                text: "Status por Dimensões"
+              },
+              subtitles: [{
+                text: "Nível de Compliance"
+              }],
+              axisY: {
+                title: ""
+              },
+              toolTip: {
+                shared: true,
+                reversed: true
+              },
+              legend: {
+                cursor: "pointer",
+                itemclick: hideUnhideDataSeries
+              },
+              data: [{
+                type: "stackedColumn",
+                name: "Em Parte",
+                showInLegend: true,
+                yValueFormatString: "#,##0",
+                dataPoints: {{ emp_data|safe }}
+              },{
+                type: "stackedColumn",
+                name: "Atendido",
+                showInLegend: true,
+                yValueFormatString: "#,##0",
+                dataPoints: {{ sim_data|safe }}
+              },{
+                type: "stackedColumn",
+                name: "Não Atendido",
+                showInLegend: true,
+                yValueFormatString: "#,##0",
+                dataPoints: {{ nao_data|safe }}
+              }]
+            });
+            chart.render();
+
+            function hideUnhideDataSeries(e) {
+              if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+                e.dataSeries.visible = false;
+              } else {
+                e.dataSeries.visible = true;
+              }
+
+              e.chart.render();
+            }
+
+
+              var chart2 = new CanvasJS.Chart("chartContainer2", {
+                animationEnabled: true,
+                exportEnabled: true,
+                theme: "dark2", //"light1", "dark1", "dark2"
+                title:{
+                  text: "Ações por Dimensão"
+                },
+                axisY:{
+                  interval: 10,
+                  suffix: "%"
+                },
+                toolTip:{
+                  shared: true
+                },
+                legend: {
+                  cursor: "pointer",
+                  itemclick: toggleDataSeries
+                },
+                data:[{
+                  type: "stackedBar100",
+                  toolTipContent: "{label}<br><b>{name}:</b> {y} ",
+                  showInLegend: true,
+                  name: "Em Andamento",
+                  dataPoints: {{ july_data|safe }}
+                },
+                {
+                  type: "stackedBar100",
+                  toolTipContent: "<b>{name}:</b> {y} ",
+                  showInLegend: true,
+                  name: "Finalizada",
+                  dataPoints: {{ august_data|safe }}
+                },
+                {
+                  type: "stackedBar100",
+                  toolTipContent: "<b>{name}:</b> {y} (#percent%)",
+                  showInLegend: true,
+                  name: "Atrasada",
+                  dataPoints: {{ september_data|safe }}
+                }]
+              });
+
+              chart2.render();
+
+              function toggleDataSeries(e) {
+                  if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+                      e.dataSeries.visible = false;
+                  } else {
+                      e.dataSeries.visible = true;
+                  }
+                  e.chart2.render();
+              }
+            }
+         </script>
+</head>
+
+<header class="min-h-screen bg-black bg-opacity-75 bg-blend-overlay showcase border-gray-600 border-b-8 flex justify-center items-center bg-no-repeat" >
+
+ <div class="container mt-6">
+     <div class="flex mt-6">
+                <div class="flex-1 w-64">
+                    <div  id="chartContainer" style="width: 100%; height: 360px;"></div>
+
+                </div>
+                <div class="flex-1 w-14">
+                    <article class="ml-20">
+                        <h1 class="font-semibold text-1xl md:text-1xl text-start indent-px ">
+                            Ações em Andamento
+                        </h1>
+                        <h2 class="font-semibold text-3xl md:text-1xl text-start pt-2 ">
+                            30
+                        </h2>
+                        <h1 class="font-semibold text-1xl md:text-1xl text-start pt-4 " >
+                        Ações Finalizadas
+                        </h1>
+                        <h2 class="font-semibold text-3xl md:text-1xl text-start pt-2">
+                            51
+                        </h2>
+                    </article>
+                </div>
+                 <div class="flex-1 w-64">
+                     <div id="chartContainer2" style="width: 100%; height: 360px;"></div>
+                </div>
+
+     </div>
+</div>
+
+
+    <script src="{% static 'canvasjs.min.js' %}"></script>
+</header>
+{% endblock %}

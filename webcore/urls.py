@@ -22,6 +22,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('grc.urls', namespace='grc')),
+    # path('django_plotly_dash/', include('django_plotly_dash.urls')),
 ]
 
 # incluindo os links para as imagens static e de midia

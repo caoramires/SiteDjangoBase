@@ -62,17 +62,23 @@ INSTALLED_APPS = [
     'crispy_bootstrap5',
     'jquery',
     'widget_tweaks',
-
+    # 'django_plotly_dash.apps.DjangoPlotlyDashConfig',
+    # 'dpd_static_support',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django.middleware.security.SecurityMiddleware",
+    # 'django_plotly_dash.middleware.BaseMiddleware',
+    # 'django_plotly_das.middleware.ExternalRedirectionMiddleware',
+
 ]
 
 ROOT_URLCONF = 'webcore.urls'
@@ -168,3 +174,6 @@ LOGIN_URL = 'grc:login'
 CRISPY_ALLAWED_TEMPLATE_PACKS = 'bootstrap5'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap5'
+
+# X_FRAME_OPTIONS = 'SAMEORIGIN'
+

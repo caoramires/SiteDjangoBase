@@ -2,7 +2,8 @@
 from django.urls import path, reverse_lazy
 from .views import Homepage, Dashboard, Dimensoes, Processos, Procedimentos, Editarproc, Editarperfil, Planos, \
     Tarefas, PlanosConcluidos, PlanosCancelados, PlanosPlanejados, EditarTarefa, CriarTarefa, CriarPlano, EditarPlano, \
-    ExcluirTarefa, ExcluirPlano, VerificaTarefasPlano, ProcessosPorDimensao, ProcedimentosPorProcesso, EditarProcedimento
+    ExcluirTarefa, ExcluirPlano, VerificaTarefasPlano, ProcessosPorDimensao, ProcedimentosPorProcesso, \
+    EditarProcedimento, Dash, Painel
 from django.contrib.auth import views as auth_view
 
 app_name = 'grc'
@@ -10,6 +11,8 @@ app_name = 'grc'
 urlpatterns = [
     path('', Homepage.as_view(), name='homepage'),
     path('grc/', Dashboard.as_view(), name='dashboard'),
+    path('painel/', Painel.as_view(), name='painel'),
+    path('dash/', Dash.as_view(), name='dash'),
     path('login/', auth_view.LoginView.as_view(template_name='login.html'), name='login'),
     path('logout/', auth_view.LogoutView.as_view(template_name='logout.html'), name='logout'),
     path('dimensoes/', Dimensoes.as_view(), name='dimensoes'),

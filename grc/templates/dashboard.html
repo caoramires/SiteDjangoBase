@@ -1,13 +1,12 @@
 {% extends 'base.html' %}
 {% load static %}
 
-
 {% block titulo %}
 Dashboard
 {% endblock %}
 
 {% block head %}
-
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 {% endblock %}
 
 {% block content %}
@@ -39,7 +38,6 @@ Dashboard
                         70%
                     </li>
 
-
                 </ul>
             </div>
 
@@ -65,12 +63,81 @@ Dashboard
                                    </ul>
                               </div>
                         {% endfor %}
-                       </div>
-
+                </div>
 
            </div>
-    </div>
 
- </header>
+       </div>
+
+            <table>
+          <thead>
+            <tr>
+              <th>Dimensão</th>
+              <th>Processo</th>
+              <th>Sim</th>
+              <th>Não</th>
+              <th>Emp</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for dimensao, processos in dimensao_data.items %}
+              <tr>
+                <th>{{ dimensao }}</th>
+                {% for processo, contagem in processos.items %}
+                  <tr>
+                    <td>{{ processo }}</td>
+                    <td>{{ contagem.sim }}</td>
+                    <td>{{ contagem.nao }}</td>
+                    <td>{{ contagem.emp }}</td>
+                  </tr>
+                {% endfor %}
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+
+    </div>
+    </header>
+
+<head>
+    <title>Stacked Bar Chart</title>
+
+</head>
+<body>
+    <h1>Stacked Bar Chart - Totais por Dimensão</h1>
+    <canvas id="myChart" width="600" height="400"></canvas>
+
+    <script>
+        // Access data from the template context
+        const labels = JSON.parse('{{ labels }}');
+        const datasets = JSON.parse('{{ datasets }}');
+
+        // Create the Chart.js chart
+        const ctx = document.getElementById('myChart').getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: datasets
+            },
+            options: {
+                // Optional chart options (e.g., title, legend, scales)
+                title: {
+                    display: true,
+                    text: 'Gráfico de Barras Empilhadas - Totais por Dimensão'
+                },
+                scales: {
+                    xAxes: [{
+                        stacked: true // Enable stacking for bars
+                    }],
+                    yAxes: [{
+                        stacked: true // Enable stacking for bars
+                    }]
+                }
+            }
+        });
+    </script>
+</body>
+
 
 {% endblock %}

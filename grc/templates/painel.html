@@ -1,0 +1,134 @@
+
+{% extends 'base.html' %}
+{% load static %}
+
+{% block titulo %}
+Dash
+{% endblock %}
+
+{% block head %}
+
+{% endblock %}
+
+{% block content %}
+
+<div style="display: none" id="chart_data" chart_data="{{data}}"></div>
+
+
+<header class="min-h-screen bg-black bg-opacity-75 bg-blend-overlay showcase border-gray-600 border-b-8 flex justify-center items-center bg-no-repeat" >
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+ <div class="container mt-6">
+     <div class="flex mt-6">
+        <div class="flex-1 w-64">
+
+            <canvas id="myChart" width="150" height="100"></canvas>
+        </div>
+
+         <div class="flex-1 w-14">
+                    <article class="ml-20 mt=14">
+                        <h1 class="font-semibold text-1xl md:text-1xl text-start indent-px ">
+                            Ações em Andamento
+                        </h1>
+                        <h2 class="font-semibold text-3xl md:text-1xl text-start pt-2 ">
+                            30
+                        </h2>
+                        <h1 class="font-semibold text-1xl md:text-1xl text-start pt-4 " >
+                        Ações Finalizadas
+                        </h1>
+                        <h2 class="font-semibold text-3xl md:text-1xl text-start pt-2">
+                            51
+                        </h2>
+                    </article>
+         </div>
+
+                 <div class="flex-1 w-64">
+                    <canvas id="myChart2" width="150" height="100"></canvas>
+                </div>
+
+     </div>
+</div>
+
+
+<script>
+        // Access data from the template context
+
+<!--            const labels = ["IDENTIFICAR", "PROTEGER", "DETECTAR", "RESPONDER", "RECUPERAR"]-->
+<!--            const datasets =[{ "label": "Sim", "data": [15, 3, 9, 13, 5, 6]}, {"label": "Não","data": [11, 5, 1, 10, 2, 5]}, {"label": "EmP","data": [12, 5, 1, 18, 4, 7]}]-->
+
+
+        const labels = JSON.parse("{{ labels|escapejs }}");
+        const datasets = JSON.parse("{{ datasets|escapejs }}");
+
+
+        // Create the Chart.js chart
+        const ctx = document.getElementById('myChart').getContext('2d');
+
+        const chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets:  datasets
+            },
+            options: {
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                        },
+                        title: {
+                            display: true,
+                            text: 'Exposições Controladas por Dimensão'
+                        }
+
+                 },
+                scales: {
+                    x: {
+                        stacked: true // Enable stacking for bars
+                    },
+                    y: {
+                        stacked: true // Enable stacking for bars
+                    }
+                }
+            }
+        });
+
+         // Segundo Chart - Horizontal
+        const ctx2 = document.getElementById('myChart2').getContext('2d');
+
+         const labels2 = ["IDENTIFICAR", "PROTEGER", "DETECTAR", "RESPONDER", "RECUPERAR"]
+         const datasets2 =[{ "label": "Sim", "data": [15, 3, 9, 13, 5, 6]}, {"label": "Não","data": [11, 5, 1, 10, 2, 5]}, {"label": "Atrasado","data": [12, 5, 1, 18, 4, 7]}]
+
+        const chart2 = new Chart(ctx2, {
+            type: 'bar',
+            data: {
+                labels: labels2,
+                datasets:  datasets2
+            },
+                options: {
+                    indexAxis: 'y',
+                    scales: {
+                            x: {
+                              stacked: true
+                            },
+                            y: {
+                              stacked: true
+                            }
+                          },
+                    responsive: true,
+                    plugins: {
+                      legend: {
+                        position: 'bottom',
+                      },
+                      title: {
+                        display: true,
+                        text: 'Ações por Dimensão'
+                      }
+                    }
+                  },
+
+           });
+
+    </script>
+
+{% endblock %}
