@@ -199,11 +199,6 @@ class Painel(TemplateView):
                     processo_data[processo]['total'] = total_processo
             dimensao_data[dimensao] = processo_data
 
-        print('-----------------------------------------------------------')
-        print(f' Dimensao_DATA >>>>> {dimensao_data}')
-        print('-----------------------------------------------------------')
-
-
         # cria dict auxiliar para plotagem
         df_data = {}
         for dimensao, processo_data in dimensao_data.items():
@@ -220,11 +215,6 @@ class Painel(TemplateView):
                     'emp': contagem['emp'],
                     'total': contagem['total'],
                 })
-
-        print('-----------------------------------------------------------')
-        print(f' DF_DATA >>>>> {df_data}')
-        print('-----------------------------------------------------------')
-
 
         for dimensao, processos in df_data.items():
             for processo in processos:
@@ -265,7 +255,6 @@ class Painel(TemplateView):
             }
             )
 
-
         labels = []
         sim = []
         nao = []
@@ -282,42 +271,107 @@ class Painel(TemplateView):
         labels_json = json.dumps(labels)
         datasets_json = json.dumps(datasets)
 
-        print('-----------------------------------------------------------')
-        print(f' labels_json  {labels_json}')
-        print('-----------------------------------------------------------')
-        print('-----------------------------------------------------------')
-        print(f' datasets_json {datasets_json}')
-        print('-----------------------------------------------------------')
-
     # Prepara dados de Planos para Plotagem
 
         # Conta as ações por processo/Procedimento
 
+        now = timezone.now()
+        hoje = now.date()
+
+        # extrai os números de planos por Dimensão
+
+        planos = Plano.objects.all()
+
+        planos_por_processo = {}
+        planos_por_dimensao = {}
+        dimensao_dic ={}
 
 
-        print('-----------------------------------------------------------')
-        print(f' dimensao_processos_dic ')
-        print('-----------------------------------------------------------')
+        for dimensao in Dimension.objects.all():   # Para cada dimensão
+            lista_processos = []
+            for processo in dimensao.processo.all():   # para cada processo
 
-        hoje = timezone.now()
-        planos_atrasados = []
+                if processo.procedimento.all(): # Verifica se existe procedimentos no processo
+                    procedimentos = processo.procedimento.all()
+                    total = 0
+                    andamento = 0
+                    concluido = 0
+                    atrasado = 0
+                    for procedimento in procedimentos:
+                        for plano in planos:
+                            if plano.procedimento == procedimento:
+                                if plano.status == 'CONCLUIDO':
+                                    concluido += 1
+                                elif plano.status == 'ANDAMENTO':
+                                    andamento += 1
+                                    if plano.data_conclusao < hoje:
+                                        atrasado += 1
+                                        andamento -= 1
+                                total = concluido + andamento + atrasado
+                        planos_por_processo[processo.nome] = {
+                                'total': total,
+                                'andamento': andamento,
+                                'atrasado': atrasado,
+                                'concluido': concluido,
+
+                               }
+
+                lista_processos.append(processo.nome)
+            dimensao_dic[dimensao.nome] = {
+                'processos': lista_processos,
+            }
+
+
+        for dimensao, processo_dic in dimensao_dic.items():
+            total = 0
+            andamento = 0
+            concluido = 0
+            atrasado = 0
+            lista_processos = processo_dic.get('processos')
+            for processo in lista_processos:
+
+                for p, dados in planos_por_processo.items():
+                    if p == processo:
+                        total += dados['total']
+                        andamento += dados['andamento']
+                        concluido += dados['concluido']
+                        atrasado += dados['atrasado']
+
+            planos_por_dimensao[dimensao] = {
+                'total': total,
+                'andamento': andamento,
+                'atrasado': atrasado,
+                'concluido': concluido,
+            }
+            total_andamento = 0
+            total_finalizadas = 0
+            andamento = []
+            atrasado =[]
+            concluido = []
+
+            for dimensao, dados_dic in planos_por_dimensao.items():
+                total_andamento += dados_dic['andamento']
+                total_finalizadas += dados_dic['concluido']
+                andamento.append(dados_dic['andamento'])
+                atrasado.append(dados_dic['atrasado'])
+                concluido.append(dados_dic['concluido'])
+
+            datasets2 = [{"label": "Andamento", "data": andamento}, {"label": "Atrasado", "data": atrasado},
+                        {"label": "Finalizado", "data": concluido}]
+            datasets2_json = json.dumps(datasets2)
 
 
 
 
+                    # Associa Número de Ações de Processo à Dimensão
 
 
-
-
-
-        # Associa Número de Ações de Processo à Dimensão
-
-        # print(f'planos_processo  {planos}')
-
-
+        context['total_andamento'] = total_andamento
+        context['total_finalizadas'] = total_finalizadas
         context['dimensao_data'] = dimensao_data
         context['labels'] = labels_json
         context['datasets'] = datasets_json
+        context['datasets2'] = datasets2_json
 
         return render(request, 'painel.html', context)
 
